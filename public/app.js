@@ -15,58 +15,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const pinInputs = [...document.querySelectorAll('.pin-input')];
     const pinError = document.getElementById('pinError');
     const clearCompletedBtn = document.getElementById('clearCompleted');
-    const listSelector = document.getElementById('listSelector');
     const renameListBtn = document.getElementById('renameList');
-    const deleteListBtn = document.getElementById('deleteList');
     const addListBtn = document.getElementById('addList');
-
-    const listControls = document.getElementById('listControls');
-
-    // Set up list selector event handlers once
-    const selectorContainer = listSelector.parentElement;
-
-    // Show/hide custom select on click
-    function handleSelectorClick(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        const customSelect = selectorContainer.querySelector('.custom-select');
-        if (customSelect) {
-            const isHidden = customSelect.style.display === 'none' || !customSelect.style.display;
-            customSelect.style.display = isHidden ? 'block' : 'none';
-        }
-    }
-
-    // Hide custom select when clicking outside
-    function handleOutsideClick(e) {
-        const customSelect = selectorContainer.querySelector('.custom-select');
-        if (customSelect && !selectorContainer.contains(e.target)) {
-            customSelect.style.display = 'none';
-        }
-    }
-
-    // Handle keyboard navigation
-    function handleKeyboard(e) {
-        const customSelect = selectorContainer.querySelector('.custom-select');
-        if (customSelect) {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                customSelect.style.display = customSelect.style.display === 'none' ? 'block' : 'none';
-            } else if (e.key === 'Escape') {
-                customSelect.style.display = 'none';
-            }
-        }
-    }
-
-    // Initialize dropdown event listeners after data is loaded
-    function initializeDropdown() {
-        listSelector.addEventListener('mousedown', handleSelectorClick);
-        document.addEventListener('click', handleOutsideClick);
-        listSelector.addEventListener('keydown', handleKeyboard);
-    }
+    const sidebar = document.getElementById('sidebar');
 
     // State
     let todos = {};
     let currentList = 'List 1';
+    let singleList = false;
 
     // List Management
     function initializeLists(data) {
@@ -91,37 +47,34 @@ document.addEventListener('DOMContentLoaded', () => {
             currentList = Object.keys(convertedData)[0];
         }
         
-        updateListSelector();
+        updateListNav();
         renderTodos();
     }
 
-    function updateListSelector() {
-        // Sort the list keys to ensure List 1 comes first
+    function updateListNav() {
+        const listNav = document.getElementById('listNav');
+        listNav.innerHTML = '';
+
+        if (singleList) {
+            sidebar.style.display = 'none';
+            return;
+        }
+
         const sortedKeys = Object.keys(todos).sort((a, b) => {
             if (a === 'List 1') return -1;
             if (b === 'List 1') return 1;
             return a.localeCompare(b);
         });
-        
-        // Update the native select
-        listSelector.innerHTML = sortedKeys.map(listId => 
-            `<option value="${listId}"${listId === currentList ? ' selected' : ''}>${listId}</option>`
-        ).join('');
-        
-        // Create a custom select
-        const customSelect = document.createElement('div');
-        customSelect.className = 'custom-select';
-        customSelect.style.display = 'none'; // Explicitly set initial state
-        
+
         sortedKeys.forEach(listId => {
-            const item = document.createElement('div');
-            item.className = `list-item ${listId === 'List 1' ? 'list-1' : ''}`;
-            item.dataset.value = listId;
-            
+            const li = document.createElement('li');
+            li.className = 'sidebar-list-item' + (listId === currentList ? ' active' : '');
+            li.dataset.value = listId;
+
             const nameSpan = document.createElement('span');
             nameSpan.textContent = listId;
-            item.appendChild(nameSpan);
-            
+            li.appendChild(nameSpan);
+
             if (listId !== 'List 1') {
                 const deleteBtn = document.createElement('button');
                 deleteBtn.type = 'button';
@@ -136,34 +89,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     e.stopPropagation();
                     deleteList(listId);
                 });
-                item.appendChild(deleteBtn);
+                li.appendChild(deleteBtn);
             }
-            
-            item.addEventListener('click', () => {
-                if (listId !== currentList) {
-                    switchList(listId);
-                    customSelect.style.display = 'none';
-                }
-            });
-            
-            customSelect.appendChild(item);
+
+            li.addEventListener('click', () => switchList(listId));
+            listNav.appendChild(li);
         });
-        
-        // Replace the existing custom select if any
-        const existingCustomSelect = selectorContainer.querySelector('.custom-select');
-        if (existingCustomSelect) {
-            const wasVisible = existingCustomSelect.style.display === 'block';
-            selectorContainer.removeChild(existingCustomSelect);
-            if (wasVisible) {
-                customSelect.style.display = 'block';
-            }
-        }
-        selectorContainer.appendChild(customSelect);
     }
 
     function switchList(listId) {
         currentList = listId;
-        listSelector.value = listId; // Update the native select value
+        updateListNav();
         renderTodos();
     }
 
@@ -172,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const newListId = `List ${listCount}`;
         todos[newListId] = [];
         currentList = newListId;
-        updateListSelector();
+        updateListNav();
         renderTodos();
         saveTodos();
         toastManager.show('New list added');
@@ -191,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentList = newName;
                 
                 // Update UI
-                updateListSelector();
+                updateListNav();
                 
                 // Save changes
                 await saveTodos();
@@ -200,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Revert all changes on failure
                 todos = oldTodos;
                 currentList = oldName;
-                updateListSelector();
+                updateListNav();
                 toastManager.show('Failed to save list name change', 'error', false, 5000);
             }
         }
@@ -225,7 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 
                 // Update UI
-                updateListSelector();
+                updateListNav();
                 renderTodos();
                 
                 // Save changes
@@ -234,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (error) {
                 // Revert changes on failure
                 todos = oldTodos;
-                updateListSelector();
+                updateListNav();
                 renderTodos();
                 toastManager.show('Failed to delete list', 'error', false, 5000);
             }
@@ -242,10 +178,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Event Listeners for List Management
-    listSelector.addEventListener('change', (e) => {
-        switchList(e.target.value);
-    });
-
     renameListBtn.addEventListener('click', renameCurrentList);
     addListBtn.addEventListener('click', addNewList);
 
@@ -279,7 +211,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) throw new Error('Failed to load todos');
             const data = await response.json();
             initializeLists(data);
-            initializeDropdown(); // Initialize dropdown after data is loaded
         } catch (error) {
             toastManager.show('Failed to load todos', 'error', true);
             console.error(error);
@@ -542,7 +473,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 document.getElementById('page-title').textContent = config.siteTitle;
                 document.getElementById('header-title').textContent = config.siteTitle;
-                if (listControls) listControls.style.display = config.singleList ? 'none' : '';
+
+                singleList = config.singleList;
+                if (singleList) {
+                    sidebar.style.display = 'none';
+                }
 
                 loadTodos();
             })

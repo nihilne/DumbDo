@@ -36,6 +36,112 @@ body {
     transition: background-color var(--transition), color var(--transition);
 }
 
+.app-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+#sidebar {
+    width: 220px;
+    min-height: 100vh;
+    background: var(--container);
+    border-right: 1px solid var(--border);
+    padding: 1rem;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+    font-weight: 600;
+    font-size: 0.8rem;
+    opacity: 0.6;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.sidebar-header-btns {
+    display: flex;
+    gap: 0.25rem;
+}
+
+#listNav {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.sidebar-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color var(--transition);
+    font-size: 0.9rem;
+}
+
+.sidebar-list-item:hover {
+    background: rgba(33, 150, 243, 0.1);
+}
+
+.sidebar-list-item.active {
+    background: rgba(33, 150, 243, 0.15);
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.sidebar-list-item span {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.sidebar-list-item .delete-btn {
+    opacity: 0;
+    background: none;
+    border: none;
+    padding: 0.2rem;
+    color: #ff4444;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+}
+
+.sidebar-list-item:hover .delete-btn {
+    opacity: 1;
+}
+
+.sidebar-list-item .delete-btn:hover {
+    color: #ff6666;
+}
+
+.sidebar-list-item .delete-btn svg {
+    width: 13px;
+    height: 13px;
+    stroke: currentColor;
+    stroke-width: 2;
+    fill: none;
+}
+
+.main-panel {
+    flex: 1;
+    overflow: auto;
+    min-width: 0;
+}
+
+/* ── App container ── */
+
 .app {
     max-width: 600px;
     margin: 0 auto;
@@ -278,20 +384,6 @@ input:focus {
     background: rgba(255,68,68,0.1);
 }
 
-/* .toast-container {
-    position: fixed;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 0.75rem 1.5rem;
-    background: var(--container);
-    border-radius: 8px;
-    box-shadow: var(--shadow);
-    opacity: 0;
-    transition: opacity var(--transition);
-    z-index: 2000;
-} */
-
 .toast-container {
     position: fixed;
     bottom: 1rem;
@@ -329,7 +421,6 @@ input:focus {
     background-color: var(--danger-status-bg);
 }
 
-
 .todo-divider {
     width: 100%;
     max-width: 500px;
@@ -342,31 +433,32 @@ input:focus {
     border-bottom: 1px solid var(--border);
 }
 
-@media (max-width: 480px) {
-    .app {
-        padding: 1rem;
-    }
-    
-    h1 {
-        font-size: 1.5rem;
-    }
-    
-    .todo-form {
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .button-group {
-        width: 100%;
-        max-width: 400px;
-    }
-    
-    .button-group button[type="submit"] {
-        flex: 1;
-    }
+.icon-btn {
+    background: transparent;
+    padding: 0.5rem;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
 }
 
-/* PIN Modal Styles */
+.icon-btn svg {
+    stroke: var(--text);
+    stroke-width: 2;
+    fill: none;
+}
+
+.icon-btn:hover {
+    background: rgba(33, 150, 243, 0.1);
+    border-color: var(--primary);
+}
+
+.icon-btn:hover svg {
+    stroke: var(--primary);
+}
+
 .modal {
     position: fixed;
     top: 0;
@@ -458,191 +550,6 @@ input:focus {
     display: block;
 }
 
-/* Remove logo styles as they're no longer needed */
-
-.list-controls {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-    justify-content: flex-start;
-    width: 100%;
-    padding: 0 1rem;
-}
-
-.list-buttons {
-    display: flex;
-    gap: 0.25rem;
-}
-
-.icon-btn {
-    background: transparent;
-    padding: 0.5rem;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid var(--border);
-}
-
-.icon-btn svg {
-    stroke: var(--text);
-    stroke-width: 2;
-    fill: none;
-}
-
-.icon-btn:hover {
-    background: rgba(33, 150, 243, 0.1);
-    border-color: var(--primary);
-}
-
-.icon-btn:hover svg {
-    stroke: var(--primary);
-}
-
-.list-selector-container {
-    position: relative;
-    min-width: 150px;
-}
-
-.list-selector-container::after {
-    content: '';
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 0;
-    height: 0;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-top: 5px solid var(--text);
-    pointer-events: none;
-    z-index: 2;
-}
-
-#listSelector {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background: var(--container);
-    color: var(--text);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 0.5rem;
-    padding-right: 24px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all var(--transition);
-    width: 100%;
-    position: relative;
-    z-index: 1;
-    text-align: left;
-}
-
-#listSelector:focus {
-    outline: none;
-    border-color: var(--primary);
-}
-
-/* Hide native select dropdown in Firefox */
-#listSelector:-moz-focusring {
-    color: transparent;
-    text-shadow: 0 0 0 var(--text);
-}
-
-/* Hide native select dropdown in IE/Edge */
-#listSelector::-ms-expand {
-    display: none;
-}
-
-#listSelector option {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-}
-
-.custom-select {
-    position: absolute;
-    top: calc(100% + 4px);
-    left: 0;
-    right: 0;
-    background: var(--container);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    box-shadow: var(--shadow);
-    display: none;
-    z-index: 100;
-    max-height: 200px;
-    overflow-y: auto;
-}
-
-.list-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.5rem 0.75rem;
-    cursor: pointer;
-    color: var(--text);
-    transition: background-color var(--transition);
-    text-align: left;
-}
-
-.list-item:hover {
-    background: rgba(33, 150, 243, 0.1);
-}
-
-.list-item .delete-btn {
-    opacity: 0;
-    transition: opacity var(--transition);
-    color: #ff4444;
-    background: none;
-    border: none;
-    padding: 0.25rem;
-    margin-left: 0.5rem;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-}
-
-.list-item:hover .delete-btn {
-    opacity: 1;
-}
-
-.list-item .delete-btn:hover {
-    color: #ff6666;
-}
-
-.list-item .delete-btn svg {
-    width: 14px;
-    height: 14px;
-    stroke: currentColor;
-    stroke-width: 2;
-    fill: none;
-}
-
-.list-item.list-1 .delete-btn {
-    display: none;
-}
-
-@media (max-width: 600px) {
-    .list-controls {
-        position: static;
-        margin-bottom: 1rem;
-        justify-content: center;
-    }
-    
-    header {
-        flex-direction: column;
-        gap: 1rem;
-    }
-    
-    #themeToggle {
-        position: static;
-        margin-left: auto;
-    }
-}
-
-/* Login Page Styles */
 .login-page {
     min-height: 100vh;
     display: flex;
@@ -681,21 +588,6 @@ input:focus {
     margin-bottom: 0.5rem;
 }
 
-@media (max-width: 480px) {
-    .login-container {
-        padding: 1rem;
-    }
-    
-    .login-box {
-        padding: 1.5rem;
-    }
-    
-    .login-page h1 {
-        font-size: 2rem;
-    }
-}
-
-/* PIN Status Styles */
 .pin-status {
     margin-top: 1rem;
     display: flex;
@@ -730,16 +622,6 @@ input:focus {
     display: block;
 }
 
-.pin-error {
-    color: #ff4444;
-    font-size: 0.9rem;
-    display: none;
-}
-
-.pin-error[aria-hidden="false"] {
-    display: block;
-}
-
 .active-todos {
     display: flex;
     flex-direction: column;
@@ -748,7 +630,6 @@ input:focus {
     align-items: center;
 }
 
-/* Add a visual indicator for drop target */
 .todo-item:not(.completed):not(.dragging)::after {
     content: '';
     position: absolute;
@@ -770,7 +651,62 @@ input:focus {
     opacity: 1;
 }
 
-/* Add touch-friendly tap target on mobile */
+@media (max-width: 600px) {
+    .app-layout {
+        flex-direction: column;
+    }
+
+    #sidebar {
+        width: 100%;
+        min-height: unset;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+    }
+
+    #listNav {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .sidebar-list-item .delete-btn {
+        opacity: 1;
+    }
+
+    .app {
+        padding: 1rem;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    .todo-form {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .button-group {
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .button-group button[type="submit"] {
+        flex: 1;
+    }
+
+    .login-container {
+        padding: 1rem;
+    }
+
+    .login-box {
+        padding: 1.5rem;
+    }
+
+    .login-page h1 {
+        font-size: 2rem;
+    }
+}
+
 @media (max-width: 768px) {
     .checkbox-wrapper {
         padding: 0.75rem;
