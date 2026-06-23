@@ -665,7 +665,9 @@ input:focus {
 
     #listNav {
         flex-direction: row;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 0.75rem;
     }
 
     .sidebar-list-item .delete-btn {
@@ -683,6 +685,11 @@ input:focus {
     .todo-form {
         flex-direction: column;
         align-items: center;
+    }
+
+    #todoForm input {
+        width: 100%;
+        max-width: 100% !important;
     }
 
     .button-group {
