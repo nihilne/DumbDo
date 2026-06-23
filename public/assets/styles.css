@@ -671,7 +671,7 @@ input:focus {
     }
 
     .sidebar-list-item .delete-btn {
-        opacity: 1;
+        display: none;
     }
 
     .app {
