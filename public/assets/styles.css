@@ -118,7 +118,8 @@ body {
     align-items: center;
 }
 
-.sidebar-list-item:hover .delete-btn {
+.sidebar-list-item:hover .delete-btn,
+.sidebar-list-item.active .delete-btn {
     opacity: 1;
 }
 
