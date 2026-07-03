@@ -23,6 +23,15 @@ document.addEventListener('DOMContentLoaded', () => {
     let todos = {};
     let currentList = 'List 1';
     let singleList = false;
+    let saveTimeout;
+
+    // Reorder debouncer
+    function queueSave() {
+        clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(() => {
+            saveTodos();
+        }, 300);
+    }
 
     // List Management
     function initializeLists(data) {
@@ -369,7 +378,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             return activeTodos.find(t => t.text === item.getAttribute('data-todo-id'));
                         });
                         todos[currentList] = [...newOrder, ...completedTodos];
-                        saveTodos();
+                        queueSave();
                     }
                 }
             });
